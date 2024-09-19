@@ -23,7 +23,22 @@ class StoreResource extends Resource
 {
     protected static ?string $model = Store::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    // a função abaixo adiciona icon no menu lateral
+    protected static ?string $navigationIcon = 'heroicon-o-building-storefront';
+
+    //a função abaixo coloca na página do recurso uma busca global
+    protected static ?string $recordTitleAttribute = 'name';
+
+    //a função abaixo agrupa links da no menu lateral
+    protected static ?string $navigationGroup = 'Admin';
+
+    //a função abaixo muda o nome do link do menu laretal
+    protected static ?string $navigationLabel = 'Lojas';
+
+    //a função abaixo muda a ordem do link do menu laretal
+    protected static ?int $navigationSort = 1;
+
+
 
     public static function form(Form $form): Form
     {
@@ -81,5 +96,11 @@ class StoreResource extends Resource
             'create' => Pages\CreateStore::route('/create'),
             'edit' => Pages\EditStore::route('/{record}/edit'),
         ];
+    }
+
+    //essa função abaixo coloca ao lado do icom a quantidade dele no bd
+    public static function getNavigationBadge(): ?string
+    {
+        return self::getModel()::count();
     }
 }
