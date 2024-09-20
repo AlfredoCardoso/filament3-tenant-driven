@@ -36,7 +36,7 @@ class StoreResource extends Resource
     protected static ?string $navigationLabel = 'Lojas';
 
     //a função abaixo muda a ordem do link do menu laretal
-    protected static ?int $navigationSort = 1;
+    protected static ?int $navigationSort = 2;
 
 
 

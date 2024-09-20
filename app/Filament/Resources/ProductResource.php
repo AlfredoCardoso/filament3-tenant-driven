@@ -37,7 +37,7 @@ class ProductResource extends Resource
     protected static ?string $navigationLabel = 'Produtos';
 
     //a função abaixo muda a ordem do link do menu laretal
-    protected static ?int $navigationSort = 2;
+    protected static ?int $navigationSort = 3;
 
 
     public static function form(Form $form): Form
@@ -45,13 +45,13 @@ class ProductResource extends Resource
         return $form->columns(1)
             ->schema([
                 TextInput::make('name')
-                ->reactive()
-                ->afterStateUpdated(function($state, $set){
-                    $state = str()->of($state)->slug();
-                    $set('slug', $state);
-                })
-                ->lazy() // Atualiza o slug somente quando o usuário sair do campo
-                ->required(),
+                    ->reactive()
+                    ->afterStateUpdated(function ($state, Forms\Set $set) {
+                        $state = str()->of($state)->slug();
+                        $set('slug', $state);
+                    })
+                    ->lazy() // Atualiza o slug somente quando o usuário sair do campo
+                    ->required(),
                 Select::make('store_id')
                     ->relationship('store', 'name', fn(Builder $query)
                     => $query->whereRelation('tenant', 'tenant_id', '=', Filament::getTenant()->id))
@@ -66,8 +66,17 @@ class ProductResource extends Resource
                     Toggle::make('status')->required(),
                     TextInput::make('stock')->required(),
                     TextInput::make('slug')
-                    ->required()
-                    ->disabled(),
+                        ->required()
+                        ->readOnly(),
+
+                    Select::make('categories')
+                        ->multiple()
+                        ->preload() // Carrega todas as opções ao clicar no campo
+                        ->searchable(false) // Desativa a busca para mostrar todas as opções imediatamente
+                        ->relationship('categories', 'name', fn(Builder $query, Forms\Get $get)
+                        => $query->whereRelation('tenant', 'tenant_id', '=', Filament::getTenant()->id)
+                        ->whereRelation('store', 'store_id', '=', $get('store_id')))
+                        ->required(),
 
                 ]),
 
